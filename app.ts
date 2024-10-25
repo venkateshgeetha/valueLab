@@ -1,19 +1,17 @@
-Implement a GET API in Node.js that takes two numbers as parameters, 
-adds them, and sends the result. Create validations around input parameters to accept numeric values. 
-Additionally, incorporate authentication using middleware
+// Implement a GET API in Node.js that takes two numbers as parameters, 
+// adds them, and sends the result. Create validations around input parameters to accept numeric values. 
+// Additionally, incorporate authentication using middleware
 
 
 // in this case we start our code using TS
 //i) first importing express for run
 
-import express {Request,Response} from express
+import express, { Request, Response, NextFunction } from 'express';
 // import express to our app
 const app = express()
 
 //for run the code local we need port , assigning port as 3000 
 const port = 3000
-
-// GET API in Node.js that takes two numbers as parameters
 
 // currently we are using get method so the value are get from parameter. in post case it has been received from body
 
@@ -22,8 +20,10 @@ const port = 3000
  /*eg:
    value : isrequired || isNumber
    isValue : boolean */
+const authenticate = (req: Request, res: Response, next: NextFunction) => req.headers['authorization'] === 'Bearer mysecrettoken' ? next() : res.status(401).json({ error: 'Unauthorized access' });
 
-app.get('/api/validate/sum',(req: request , res : response)=>{
+  // GET API in Node.js that takes two numbers as parameters
+  app.get('/api/validate/sum', authenticate, (req: Request, res: Response) => {
 
     // get the number from parameter
 
@@ -37,6 +37,7 @@ app.get('/api/validate/sum',(req: request , res : response)=>{
     else{
        value = numVal1 + numVal2;
        console.log("the value is "+ value)
+       res.json({ value });
     }
 })
 // in this case we are using app.listen for connect our application locally
